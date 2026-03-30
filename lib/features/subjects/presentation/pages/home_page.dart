@@ -25,60 +25,239 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showSettingsDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.settings),
-          content: BlocBuilder<SettingsCubit, SettingsState>(
-            builder: (context, state) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Dark Mode'),
-                      Switch(
-                        value: state.themeMode == ThemeMode.dark,
-                        onChanged: (val) {
-                          context.read<SettingsCubit>().updateTheme(
-                            val ? ThemeMode.dark : ThemeMode.light,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.language),
-                      DropdownButton<String>(
-                        value: state.localeCode,
-                        items: const [
-                          DropdownMenuItem(value: 'uz', child: Text("O'zbek")),
-                          DropdownMenuItem(value: 'en', child: Text("English")),
-                          DropdownMenuItem(value: 'ru', child: Text("Русский")),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) {
-                            context.read<SettingsCubit>().updateLocale(val);
-                          }
-                        },
-                      ),
-                    ],
+        return BlocBuilder<SettingsCubit, SettingsState>(
+          builder: (context, state) {
+            final l10n = AppLocalizations.of(context)!;
+            final isDark = state.themeMode == ThemeMode.dark;
+            final theme = Theme.of(context);
+            return Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20),
+                    blurRadius: 40,
+                    offset: const Offset(0, 10),
                   ),
                 ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Handle indicator
+                  Container(
+                    width: 48,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: theme.dividerColor.withAlpha(50),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.settings_outlined,
+                        color: theme.colorScheme.primary,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        l10n.settings,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: theme.textTheme.titleLarge?.color,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Theme Setting Tile
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: theme.dividerColor.withAlpha(30),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(10),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: isDark ? Colors.indigoAccent.withAlpha(40) : Colors.orangeAccent.withAlpha(40),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Icon(
+                                isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                                color: isDark ? Colors.indigoAccent : Colors.orangeAccent,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              'Dark Mode', // Fallback text when no localization
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.w600,
+                                color: theme.textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Switch.adaptive(
+                          value: isDark,
+                          activeColor: Colors.indigoAccent,
+                          activeTrackColor: Colors.indigoAccent.withAlpha(80),
+                          inactiveThumbColor: Colors.orangeAccent,
+                          inactiveTrackColor: Colors.orangeAccent.withAlpha(40),
+                          trackOutlineColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
+                          onChanged: (val) {
+                            context.read<SettingsCubit>().updateTheme(
+                              val ? ThemeMode.dark : ThemeMode.light,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Language Setting Tile
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: theme.dividerColor.withAlpha(30),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(10),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withAlpha(40),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Icon(
+                                Icons.language_rounded,
+                                color: Colors.green,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Text(
+                              l10n.language,
+                              style: TextStyle(
+                                fontSize: 18, 
+                                fontWeight: FontWeight.w600,
+                                color: theme.textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withAlpha(20),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: state.localeCode,
+                              icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.primary),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                              dropdownColor: theme.cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              items: const [
+                                DropdownMenuItem(value: 'uz', child: Text("O'zbek")),
+                                DropdownMenuItem(value: 'en', child: Text("English")),
+                                DropdownMenuItem(value: 'ru', child: Text("Русский")),
+                              ],
+                              onChanged: (val) {
+                                if (val != null) {
+                                  context.read<SettingsCubit>().updateLocale(val);
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );

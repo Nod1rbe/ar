@@ -25,6 +25,8 @@ class _ARViewPageState extends State<ARViewPage> {
   ARAnchorManager? arAnchorManager;
 
   bool _isLoadingModel = false;
+  bool _isModelPlaced = false;
+  ARNode? _currentNode;
 
   @override
   void dispose() {
@@ -53,21 +55,42 @@ class _ARViewPageState extends State<ARViewPage> {
             right: 0,
             child: Column(
               children: [
-                if (_isLoadingModel)
-                  const CircularProgressIndicator(color: Colors.blueAccent),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(20),
+                if (_isLoadingModel) ...[
+                  const CircularProgressIndicator(color: Colors.white),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Model yuklanmoqda...",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                  child: Text(
-                    "Modelni chaqirish xona o'rtasiga: \nInternetdan (${widget.subject.name}) yuklanmoqda...",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                ] else if (!_isModelPlaced) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      "Kamerani to'g'irlab, tugmani bosing",
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  FloatingActionButton.extended(
+                    onPressed: _loadWebModel,
+                    icon: const Icon(Icons.add_location_alt),
+                    label: const Text("Shu yerga qo'yish"),
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                  ),
+                ] else ...[
+                  FloatingActionButton.extended(
+                    onPressed: _removeModel,
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text("O'chirish va qayta joylash"),
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                  ),
+                ],
               ],
             ),
           )
@@ -89,13 +112,20 @@ class _ARViewPageState extends State<ARViewPage> {
     this.arSessionManager!.onInitialize(
       showFeaturePoints: false,
       showPlanes: true,
-      showWorldOrigin: true,
+      showWorldOrigin: false, // World origin ni o'chiramiz, xalaqit qilmasligi uchun
       handleTaps: false,
     );
     this.arObjectManager!.onInitialize();
+  }
 
-    // Avtomatik ravishda modelni ekranga qo'shish
-    _loadWebModel();
+  Future<void> _removeModel() async {
+    if (_currentNode != null) {
+      await arObjectManager!.removeNode(_currentNode!);
+      setState(() {
+        _isModelPlaced = false;
+        _currentNode = null;
+      });
+    }
   }
 
   Future<void> _loadWebModel() async {
@@ -104,12 +134,20 @@ class _ARViewPageState extends State<ARViewPage> {
     });
 
     try {
-      // Create a node with webGLB type fetched from the Internet
+      math.Vector3 position = math.Vector3(0.0, 0.0, -1.0);
+      try {
+        Matrix4? cameraPose = await arSessionManager!.getCameraPose();
+        position = math.Vector3(0, 0, -1);
+        cameraPose?.transform3(position); // position o'zgaruvchisiga cameraPose qo'llaniladi
+      } catch (e) {
+        debugPrint("Camera pose olishda xatolik: $e");
+      }
+
       var newNode = ARNode(
         type: NodeType.webGLB,
         uri: widget.subject.modelUrl,
         scale: math.Vector3(0.5, 0.5, 0.5),
-        position: math.Vector3(0.0, 0.0, -1.0), // Z-o'qi bo'yicha 1 metr oldinga
+        position: position,
       );
 
       bool? didAddNode = await arObjectManager!.addNode(newNode);
@@ -118,7 +156,11 @@ class _ARViewPageState extends State<ARViewPage> {
         if (didAddNode != true) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Modelni qo'shib bo'lmadi!")));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Model muvaffaqiyatli yuklandi!"), backgroundColor: Colors.green));
+          setState(() {
+            _isModelPlaced = true;
+            _currentNode = newNode;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Model muvaffaqiyatli joylandi!"), backgroundColor: Colors.green));
         }
       }
     } catch (e) {

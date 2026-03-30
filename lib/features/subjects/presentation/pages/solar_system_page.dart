@@ -1,15 +1,6 @@
-import 'dart:async';
-import 'dart:math' as dart_math;
-import 'package:ar_flutter_plugin_plus/ar_flutter_plugin_plus.dart';
-import 'package:ar_flutter_plugin_plus/datatypes/config_planedetection.dart';
-import 'package:ar_flutter_plugin_plus/datatypes/node_types.dart';
-import 'package:ar_flutter_plugin_plus/managers/ar_anchor_manager.dart';
-import 'package:ar_flutter_plugin_plus/managers/ar_location_manager.dart';
-import 'package:ar_flutter_plugin_plus/managers/ar_object_manager.dart';
-import 'package:ar_flutter_plugin_plus/managers/ar_session_manager.dart';
-import 'package:ar_flutter_plugin_plus/models/ar_node.dart';
 import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math_64.dart' as math;
+import 'package:model_viewer_plus/model_viewer_plus.dart';
+import 'package:ar/l10n/app_localizations.dart';
 
 class SolarSystemPage extends StatefulWidget {
   const SolarSystemPage({super.key});
@@ -19,69 +10,54 @@ class SolarSystemPage extends StatefulWidget {
 }
 
 class _SolarSystemPageState extends State<SolarSystemPage> {
-  ARSessionManager? arSessionManager;
-  ARObjectManager? arObjectManager;
-  ARNode? planetNode;
-  
-  double _orbitSpeed = 10.0;
-  Timer? _orbitTimer;
-  double _angle = 0.0;
-
-  final String sunUrl = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb"; 
-  final String planetUrl = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb"; 
-
-  @override
-  void dispose() {
-    _orbitTimer?.cancel();
-    arSessionManager?.dispose();
-    super.dispose();
-  }
-
-  void _startOrbit() {
-    _orbitTimer?.cancel();
-    _orbitTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (planetNode == null) return;
-      _angle += (_orbitSpeed / 500.0);
-      
-      double radius = 0.8;
-      double newX = radius * dart_math.cos(_angle);
-      double newZ = -2.0 + (radius * dart_math.sin(_angle));
-      
-      arObjectManager!.removeNode(planetNode!);
-      planetNode = ARNode(
-        type: NodeType.webGLB,
-        uri: planetUrl,
-        scale: math.Vector3(0.05, 0.05, 0.05),
-        position: math.Vector3(newX, 0.0, newZ),
-      );
-      arObjectManager!.addNode(planetNode!);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Quyosh Sistemasi'), backgroundColor: Colors.transparent, elevation: 0),
+      appBar: AppBar(
+        title: Text(l10n.solarSystemTitle),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      ),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          ARView(onARViewCreated: onARViewCreated, planeDetectionConfig: PlaneDetectionConfig.horizontal),
+          Container(
+            color: const Color(0xff121212),
+            child: const ModelViewer(
+              backgroundColor: Color(0xff121212),
+              src: 'assets/models/solar_system.glb',
+              alt: "A 3D model of the Solar System",
+              ar: true,
+              autoRotate: true,
+              autoPlay: true,
+              cameraControls: true,
+              disableZoom: false,
+            ),
+          ),
           Positioned(
-            bottom: 40,
+            bottom: 60,
             left: 20,
             right: 20,
             child: Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white24, width: 1),
+              ),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                   Text("Aylanish tezligi: ${_orbitSpeed.toInt()} km/s", style: const TextStyle(color: Colors.white, fontSize: 16)),
-                  Slider(
-                    value: _orbitSpeed,
-                    min: 1,
-                    max: 100,
-                    activeColor: Colors.amberAccent,
-                    onChanged: (val) => setState(() => _orbitSpeed = val),
+                  const Icon(Icons.touch_app, color: Colors.amberAccent, size: 28),
+                  const SizedBox(height: 8),
+                  Text(
+                    "3D obyektni aylantirishingiz va yaqinlashtirishingiz mumkin. 'AR' rejimiga o'tish uchun ekrandagi maxsus tugmani bosing.",
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -90,23 +66,5 @@ class _SolarSystemPageState extends State<SolarSystemPage> {
         ],
       ),
     );
-  }
-
-  void onARViewCreated(
-    ARSessionManager session, ARObjectManager object, ARAnchorManager anchor, ARLocationManager location) {
-    arSessionManager = session;
-    arObjectManager = object;
-    arSessionManager!.onInitialize(showFeaturePoints: false, showPlanes: true);
-    arObjectManager!.onInitialize();
-    _placeSunSystem();
-  }
-
-  Future<void> _placeSunSystem() async {
-    var fixedSunNode = ARNode(type: NodeType.webGLB, uri: sunUrl, scale: math.Vector3(0.2, 0.2, 0.2), position: math.Vector3(0, 0, -2.0));
-    planetNode = ARNode(type: NodeType.webGLB, uri: planetUrl, scale: math.Vector3(0.05, 0.05, 0.05), position: math.Vector3(0.8, 0, -2.0));
-    
-    await arObjectManager!.addNode(fixedSunNode);
-    await arObjectManager!.addNode(planetNode!);
-    _startOrbit();
   }
 }

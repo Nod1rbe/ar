@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title:
-                'Maktab AR', // Localized title can be used inside widgets instead
+                'Maktab AR',
             themeMode: settingsState.themeMode,
             theme: ThemeData(
               brightness: Brightness.light,
