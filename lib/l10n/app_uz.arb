@@ -1,0 +1,64 @@
+{
+  "@@locale": "uz",
+  "appTitle": "Maktab AR",
+  "homeTitle": "AR Maktab Ilovasi",
+  "dataNotFound": "Ma'lumot topilmadi",
+  "loading": "Yuklanmoqda...",
+  "biology": "Biologiya",
+  "astronomy": "Astronomiya",
+  "physics": "Fizika",
+  "chemistry": "Kimyo",
+  "practice": "Amaliyotlar",
+  "flowerGrowthTitle": "Gul O'sishi",
+  "flowerGrowthSub": "Gulning urug'dan unib chiqishi AR modelida",
+  "beePollinationTitle": "Changlantirish",
+  "beePollinationSub": "Asalarining gullardan chang yig'ishi",
+  "heartPulseTitle": "Yurak Urishi",
+  "heartPulseSub": "Inson yuragi urish tezligini nazorat qilish",
+  "xrayAnatomyTitle": "X-Ray Anatomiyasi",
+  "xrayAnatomySub": "Tirik mavjudotning ichki organlari (Shaffof)",
+  "atomStructureTitle": "Atom Konstruktori",
+  "atomStructureSub": "3D model atrofida elektronlar harakatini kuzating",
+  "chemReactionTitle": "Kimyoviy Reaksiya",
+  "chemReactionSub": "Ikki xil modda elementlarini aralashtirish jarayoni",
+  "solarSystemTitle": "Quyosh Sistemasi",
+  "solarSystemSub": "Sayyoralarning umumiy aylanish tezligini boshqaring",
+  "lunarEclipseTitle": "Oy Tutilishi",
+  "lunarEclipseSub": "Yer, Oy va Quyosh nuring kesishishi simulyatsiyasi",
+  "waterDrop": "Suv quyish",
+  "flowerGrowing": "Gul o'smoqda... (Scale o'zgarishi)",
+  "pollinateBtn": "Changlantirish",
+  "speedPulse": "Tezlik: {rate} zarba / daq",
+  "@speedPulse": {
+    "placeholders": {
+      "rate": {"type": "int"}
+    }
+  },
+  "xrayMode": "X-Ray (Shaffof) Rejimi",
+  "electronSpeed": "Elektron harakat tezligi: {speed}",
+  "@electronSpeed": {
+    "placeholders": {
+      "speed": {"type": "int"}
+    }
+  },
+  "mixChemicals": "Aralashtirish (Reaksiya)",
+  "reactionHappening": "Reaksiya ketmoqda! Olov yoki rang o'zgarishi.",
+  "orbitSpeed": "Aylanish tezligi: {speed} km/s",
+  "@orbitSpeed": {
+    "placeholders": {
+      "speed": {"type": "int"}
+    }
+  },
+  "startEclipse": "Tutilishni Boshlash",
+  "eclipseHappening": "Oy Quyosh va Yer o'rtasidan aylanmoqda...",
+  "modelLoading": "Modelni chaqirish xona o'rtasiga: \nInternetdan ({name}) yuklanmoqda...",
+  "@modelLoading": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "modelAdded": "Model muvaffaqiyatli yuklandi!",
+  "modelError": "Modelni qo'shib bo'lmadi!",
+  "settings": "Sozlamalar",
+  "language": "Til"
+}
