@@ -28,6 +28,13 @@ class SubjectLocalDataSourceImpl implements SubjectLocalDataSource {
         ),
         const SubjectModel(
           id: '3',
+          name: 'Kimyo',
+          description: 'Moddalar tuzilishi va ularning xossalari',
+          iconUrl: 'assets/tracking_images/target.jpg',
+          modelUrl: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Box/glTF-Binary/Box.glb',
+        ),
+        const SubjectModel(
+          id: '4',
           name: 'Fizika',
           description: 'Tabiat qonunlari va harakat (Demo Fish)',
           iconUrl: 'assets/tracking_images/target.jpg',

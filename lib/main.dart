@@ -29,40 +29,52 @@ class MyApp extends StatelessWidget {
         builder: (context, settingsState) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title:
-                'Maktab AR',
+            title: 'Maktab AR',
             themeMode: settingsState.themeMode,
             theme: ThemeData(
               brightness: Brightness.light,
-              primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+              primaryColor: const Color(0xFF00C853),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF00C853),
+                primary: const Color(0xFF00C853),
+                secondary: const Color(0xFF7C3AED),
+                surface: Colors.white,
+                onSurface: const Color(0xFF0F172A),
+              ),
+              scaffoldBackgroundColor: const Color(0xFFF8FAFC),
               appBarTheme: const AppBarTheme(
                 elevation: 0,
-                backgroundColor: Colors.blueAccent,
-                centerTitle: true,
-                titleTextStyle: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                iconTheme: IconThemeData(color: Colors.white),
+                backgroundColor: Colors.transparent,
+                centerTitle: false,
+                iconTheme: IconThemeData(color: Color(0xFF0F172A)),
+              ),
+              cardTheme: const CardThemeData(
+                elevation: 0,
+                margin: EdgeInsets.zero,
               ),
               useMaterial3: true,
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
-              primarySwatch: Colors.blue,
-              scaffoldBackgroundColor: const Color(0xFF121212),
+              primaryColor: const Color(0xFF00F59B),
+              colorScheme: ColorScheme.fromSeed(
+                brightness: Brightness.dark,
+                seedColor: const Color(0xFF00F59B),
+                primary: const Color(0xFF00F59B),
+                secondary: const Color(0xFF8B5CF6),
+                surface: const Color(0xFF0F172A),
+                onSurface: Colors.white,
+              ),
+              scaffoldBackgroundColor: const Color(0xFF020617),
               appBarTheme: const AppBarTheme(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
-                centerTitle: true,
-                titleTextStyle: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                centerTitle: false,
                 iconTheme: IconThemeData(color: Colors.white),
+              ),
+              cardTheme: const CardThemeData(
+                elevation: 0,
+                margin: EdgeInsets.zero,
               ),
               useMaterial3: true,
             ),
